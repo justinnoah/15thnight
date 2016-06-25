@@ -95,7 +95,7 @@ class User(Model):
         return cls.query.filter(cls.email == email).first()
 
     @classmethod
-    def get_provider(cls, food, shelter, clothes, other):
+    def get_providers(cls, food, shelter, clothes, other):
         users = cls.query.filter(cls.role == 'provider').all()
         providers = []
         for user in users:
@@ -173,6 +173,14 @@ class Alert(Model):
                 active_alerts.append(alert)
 
         return active_alerts
+
+    @classmethod
+    def get_user_alerts(cls, user):
+        return cls.query.filter(cls.user == user).all()
+
+    @classmethod
+    def get_user_alert(cls, user, id):
+        return cls.query.filter(cls.user == user & cls.id == id).first()
 
     @classmethod
     def get_alerts(cls):
