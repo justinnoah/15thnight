@@ -16,7 +16,6 @@
 <div>
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-
         <li role="presentation" class="active"><a href="#welcome" aria-controls="welcome" role="tab" data-toggle="tab">Welcome</a></li>
         <li role="presentation"><a href="#register" aria-controls="register" role="tab" data-toggle="tab">Register User</a></li>
         <li role="presentation"><a href="#history" aria-controls="history" role="tab" data-toggle="tab">Alert History</a></li>
@@ -75,31 +74,37 @@
             <table id="users" class="table">
                 <head>
                     <tr>
+                        <th>Role</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Created At</th>
-                        <th>Role</th>
-                        <th>Provider Capabilities</th>
+                        <th>Shelter</th>
+                        <th>Food</th>
+                        <th>Clothes</th>
+                        <th>Other</th>
+                        <th>Update</th>
                         <th>Delete</th>
                     </tr>
                 </head>
                 <body>
-                    {% for user in users %}
-                        <tr>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.phone_number }}</td>
-                            <td>{{ user.created_at.strftime('%m/%d/%y %I:%M%p') }}</td>
-                            <td>{{ user.role }}</td>
-                            <td>{{ user.provider_capabilities() }}</td>
-                            <td>{% if current_user.id != user.id %}<button class="btn btn-danger" data-id="{{ user.id }}">Delete</button>{% endif %}</td>
-                        </tr>
+                    {% for user_form in edit_user_forms %}
+                        <tr><form action="POST">
+                            {{ user_form.csrf_token }}
+                            <td>{{ user_form.role }}</td>
+                            <td>{{ user_form.email }}</td>
+                            <td>{{ user_form.phone_number }}</td>
+                            <td>{{ user_form.clothes }}</td>
+                            <td>{{ user_form.food }}</td>
+                            <td>{{ user_form.other }}</td>
+                            <td>{{ user_form.shelter }}</td>
+                            <td><button class="btn btn-primary" data-id="{{ user.id }}">Update</button></td>
+                            <td>{% if current_user.id != user_form.id %}<button class="btn btn-danger" data-id="{{ user.id }}">Delete</button>{% endif %}</td>
+                        </form></tr>
                     {% endfor %}
                 </body>
             </table>
         </div>
     </div>
     <form action="/delete_user" method="post" id="delete_form">
-        {{ delete_user_form.csrf_token }} 
         <input type="hidden" name="id" id="delete_id" />
     </form>
 </div>

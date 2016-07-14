@@ -12,7 +12,7 @@ from werkzeug.exceptions import HTTPException
 from _15thnight.email_client import send_email, verify_email
 from _15thnight import database
 from _15thnight.forms import (
-    RegisterForm, LoginForm, AlertForm, ResponseForm, DeleteUserForm
+    AlertForm, EditUserForm, LoginForm, RegisterForm, ResponseForm
 )
 from _15thnight.models import User, Alert, Response
 from _15thnight.twilio_client import send_sms
@@ -124,34 +124,39 @@ def dashboard():
     """Dashboard."""
     if current_user.role == 'admin':
         # Admin user, show register form
-        form = RegisterForm()
+        register_form = RegisterForm()
         form_error = False
-        deleted_user = session.pop('deleted_user', False)
-        if request.method == 'POST' and form.validate_on_submit():
+        if request.method == 'POST' and register_form.validate_on_submit():
             user = User(
-                email=form.email.data,
-                password=form.password.data,
-                phone_number=form.phone_number.data,
-                other=form.other.data,
-                shelter=form.shelter.data,
-                food=form.food.data,
-                clothes=form.clothes.data,
-                role=form.role.data
+                email=register_form.email.data,
+                password=register_form.password.data,
+                phone_number=register_form.phone_number.data,
+                other=register_form.other.data,
+                shelter=register_form.shelter.data,
+                food=register_form.food.data,
+                clothes=register_form.clothes.data,
+                role=register_form.role.data
             )
             user.save()
             verify_email(user.email)
             flash('User registered succesfully', 'success')
             return redirect(url_for('dashboard'))
-        elif request.method == 'POST' and not form.validate_on_submit():
+        elif request.method == 'POST' and not register_form.validate_on_submit():
             form_error = True
+
+        user_forms = list()
+        for u in User.get_users():
+            e = EditUserForm(obj=u)
+            e.id = u.id
+            user_forms.append(e)
+
         return render_template(
             'dashboard/admin.html',
-            form=form,
+            form=register_form,
             form_error=form_error,
-            users=User.get_users(),
+            edit_user_forms=user_forms,
             alerts=Alert.get_alerts(),
-            delete_user_form=DeleteUserForm(),
-            deleted_user=deleted_user
+            user=current_user,
         )
     elif current_user.role == 'advocate':
         # Advocate user, show alert form
@@ -202,14 +207,6 @@ def delete_user():
     if current_user.role != 'admin':
         flash('Access denied', 'danger')
         return redirect(url_for('dashboard'))
-    form = DeleteUserForm()
-    if form.validate_on_submit():
-        user = User.get(form.id.data)
-        user.delete()
-        flash('User Deleted Successfully', 'success')
-    else:
-        flash('Failed to delete user', 'danger')
-    session['deleted_user'] = True
     return redirect(url_for('dashboard'))
 
 
