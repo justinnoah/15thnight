@@ -29,7 +29,7 @@ def create_alert():
     if not form.validate_on_submit():
         return api_error('Invalid form.')
 
-    send_out_alert(form)
+    send_out_alert(form, current_user)
     return '', 201
 
 

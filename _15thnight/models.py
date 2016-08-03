@@ -2,7 +2,8 @@
 from datetime import datetime, timedelta
 
 from sqlalchemy import (
-    Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text, desc
+    Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text, and_,
+    desc
 )
 from sqlalchemy.orm import relationship
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -217,6 +218,25 @@ class Response(Model):
     def get_by_user_and_alert(cls, user, alert):
         return cls.query.filter(
             cls.user == user).filter(cls.alert == alert).all()
+
+
+class SlackMessage(Model):
+    """Record of messages sent to slack."""
+
+    __tablename__ = 'slack_messages'
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(Integer, ForeignKey('alerts.id'), nullable=False)
+    channel = Column(String, nullable=False)
+    timestamp = Column(String, nullable=False)
+
+    def get_valid_message(cls, alert_id, channel):
+        """Check that the alert_id comes from an IM that was sent."""
+
+        valid = SlackMessage.query.filter(and_(
+            SlackMessage.alert_id == alert_id,
+            SlackMessage.channel == channel
+        )).first()
+        return valid
 
 
 user_categories = Table(

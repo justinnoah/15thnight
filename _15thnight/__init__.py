@@ -8,16 +8,15 @@ from flask.ext.login import (
 )
 from werkzeug.exceptions import HTTPException
 
-from _15thnight import database
 from _15thnight.api import account_api, alert_api, response_api, user_api
 from _15thnight.core import send_out_alert, respond_to_alert
+from _15thnight.database import db_session
 from _15thnight.email_client import send_email, verify_email
 from _15thnight.forms import (
     AddCategoryForm, AlertForm, DeleteUserForm, LoginForm, RegisterForm,
     ResponseForm
 )
 from _15thnight.models import Alert, User
-from _15thnight import queue
 
 
 login_manager = LoginManager()
@@ -41,11 +40,11 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'login'
 
-    queue.init_app(app)
-
     return app
 
+from _15thnight.queue import init_app as queue_init_app
 app = create_app()
+queue_init_app(app)
 
 
 @login_manager.user_loader
@@ -57,7 +56,7 @@ def load_user(id):
 @app.teardown_appcontext
 def shutdown_session(response):
     """Database management."""
-    database.db_session.remove()
+    db_session.remove()
 
 
 @app.errorhandler(404)
@@ -151,7 +150,7 @@ def dashboard():
         # Advocate user, show alert form
         form = AlertForm()
         if request.method == 'POST' and form.validate_on_submit():
-            send_out_alert(form)
+            send_out_alert(form, current_user)
             flash('Alert sent successfully', 'success')
             return redirect(url_for('dashboard'))
 
