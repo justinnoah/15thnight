@@ -16,29 +16,36 @@ from _15thnight.forms import (
     AddCategoryForm, AlertForm, DeleteUserForm, LoginForm, RegisterForm,
     ResponseForm
 )
-from _15thnight.models import Alert, Category, User
+from _15thnight.models import Alert, User
 from _15thnight import queue
 
 
-app = Flask(__name__)
-
-try:
-    app.config.from_object('config')
-except:
-    app.config.from_object('configdist')
-
-app.secret_key = app.config['SECRET_KEY']
-
-app.register_blueprint(alert_api, url_prefix='/api/v1')
-app.register_blueprint(account_api, url_prefix='/api/v1')
-app.register_blueprint(response_api, url_prefix='/api/v1')
-app.register_blueprint(user_api, url_prefix='/api/v1')
-
-queue.init_app(app)
-
 login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+
+
+def create_app():
+    app = Flask(__name__)
+
+    try:
+        app.config.from_object('config')
+    except:
+        app.config.from_object('configdist')
+
+    app.secret_key = app.config['SECRET_KEY']
+
+    app.register_blueprint(alert_api, url_prefix='/api/v1')
+    app.register_blueprint(account_api, url_prefix='/api/v1')
+    app.register_blueprint(response_api, url_prefix='/api/v1')
+    app.register_blueprint(user_api, url_prefix='/api/v1')
+
+    login_manager.init_app(app)
+    login_manager.login_view = 'login'
+
+    queue.init_app(app)
+
+    return app
+
+app = create_app()
 
 
 @login_manager.user_loader
@@ -241,6 +248,3 @@ def response_submitted(alert_id):
             'respond_to.html',
             alert=alert, user=current_user, form=ResponseForm()
         )
-
-if __name__ == '__main__':
-    app.run(debug=True)
