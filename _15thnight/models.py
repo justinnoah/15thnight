@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 
 from flask import url_for
 from sqlalchemy import (
-    Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text, desc,
-    Boolean
+    Boolean, Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text,
+    desc
 )
 from sqlalchemy.orm import backref, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -164,8 +164,8 @@ class Alert(Model):
 
         def need_mapper(need):
             """
-            Need is applicable it's not marked as resolved
-            or the provider hasn't responded to it.
+            Need is applicable when:
+              not marked as resolved or no provider response.
             """
             need_count = len(NeedProvided.get_by_need_and_provider(need, user))
             if need.resolved or need_count > 0:

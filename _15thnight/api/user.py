@@ -69,7 +69,6 @@ def update_user(user_id):
         form = BaseUserForm(**form_kwargs)
     if not form.validate_on_submit():
         return api_error(form.errors)
-    services = []
     if form.role.data == 'provider':
         user.services = Service.get_by_ids(form.services.data)
     user.email = form.email.data

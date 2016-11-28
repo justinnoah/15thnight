@@ -119,8 +119,8 @@ def resolve_need(need):
               '%d y/o%s') % args
 
     selected = set()
-    users = set(map(
-        lambda provision: provision.response.user, need.provisions))
+    users = set(
+        map(lambda provision: provision.response.user, need.provisions))
     for provision in need.provisions:
         if provision.selected:
             selected.add(provision.response.user_id)

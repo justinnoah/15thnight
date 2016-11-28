@@ -55,7 +55,7 @@ def delete_response(uuid):
     """
     Delete a response to an alert.
     """
-    return 'Not Implemented', 501 # We currently don't support a UI for this
+    return 'Not Implemented', 501  # We currently don't support a UI for this
     alert = Alert.get(uuid)
     if not alert:
         return api_error('Alert not found.', 404)

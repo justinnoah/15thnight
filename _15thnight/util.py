@@ -11,9 +11,11 @@ class ExtensibleJSONEncoder(JSONEncoder):
             return obj.to_json()
         return super(ExtensibleJSONEncoder, self).default(obj)
 
+
 def extend(dict1, dict2):
     dict1.update(dict2)
     return dict1
+
 
 def jsonify(*args, **kwargs):
     """Returns a json response"""

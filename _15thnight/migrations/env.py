@@ -53,8 +53,10 @@ def run_migrations_offline():
     with context.begin_transaction():
         context.run_migrations()
 
-def compare_type(context, inspected_column,
-            metadata_column, inspected_type, metadata_type):
+
+def compare_type(context, inspected_column, metadata_column,
+                 inspected_type, metadata_type):
+
     replace = dict(
         VARCHAR='String',
         TINYINT='Boolean',
@@ -63,12 +65,13 @@ def compare_type(context, inspected_column,
         INTEGER='Integer',
         TEXT='Text'
     )
-    pattern = re.compile( '|'.join(replace.keys()))
-    left = pattern.sub(lambda x: replace[x.group()],
-        inspected_column.type.__class__.__name__)
-    right = pattern.sub(lambda x: replace[x.group()],
-        metadata_column.type.__class__.__name__)
+    pattern = re.compile('|'.join(replace.keys()))
+    left = pattern.sub(
+        lambda x: replace[x.group()], inspected_column.type.__class__.__name__)
+    right = pattern.sub(
+        lambda x: replace[x.group()], metadata_column.type.__class__.__name__)
     return left != right
+
 
 def run_migrations_online():
     """Run migrations in 'online' mode.
