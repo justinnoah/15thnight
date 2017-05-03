@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from flask.ext.script import Manager
 
-from _15thnight import app
-from _15thnight.database import Model, engine
-from _15thnight.models import User
+from ran import app
+from ran.database import Model, engine
+from ran.models import User
 
 
 manager = Manager(app)

@@ -7,7 +7,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from _15thnight.database import Model
+from ran.database import Model
 
 
 class User(Model):

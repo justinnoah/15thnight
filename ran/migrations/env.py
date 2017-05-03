@@ -6,8 +6,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
 
-from _15thnight import models
-from _15thnight.database import Model
+from ran import models
+from ran.database import Model
 
 try:
     from config import DATABASE_URL

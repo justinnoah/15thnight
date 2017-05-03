@@ -9,13 +9,13 @@ from flask.ext.login import (
 )
 from werkzeug.exceptions import HTTPException
 
-from _15thnight.email_client import send_email, verify_email
-from _15thnight import database
-from _15thnight.forms import (
+from ran.email_client import send_email, verify_email
+from ran import database
+from ran.forms import (
     RegisterForm, LoginForm, AlertForm, ResponseForm, DeleteUserForm
 )
-from _15thnight.models import User, Alert, Response
-from _15thnight.twilio_client import send_sms
+from ran.models import User, Alert, Response
+from ran.twilio_client import send_sms
 
 try:
     from config import HOST_NAME
